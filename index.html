@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>h3llafogg3y</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f7f4;
+      --ink: #111;
+      --muted: #999;
+      --border: #e0ddd8;
+      --mono: 'DM Mono', monospace;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--bg);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 1.6rem 2rem 1rem;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    header.scrolled { border-color: var(--border); }
+
+    .site-name {
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+    nav button {
+      background: none;
+      border: none;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+      position: relative;
+    }
+    nav button::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1px;
+      background: var(--ink);
+      transform: scaleX(0);
+      transition: transform 0.2s;
+    }
+    nav button.active {
+      color: var(--ink);
+    }
+    nav button.active::after {
+      transform: scaleX(1);
+    }
+    nav button:hover { color: var(--ink); }
+
+    /* ── MAIN ── */
+    main {
+      padding-top: 5rem;
+      min-height: 100vh;
+    }
+
+    /* ── TAB PANELS ── */
+    .panel {
+      display: none;
+      padding: 3rem 2rem 4rem;
+    }
+    .panel.active { display: block; }
+
+    /* ── PHOTO GRID ── */
+    .grid {
+      columns: 3;
+      column-gap: 6px;
+    }
+    .grid-item {
+      break-inside: avoid;
+      margin-bottom: 6px;
+      display: block;
+      overflow: hidden;
+      background: var(--border);
+      cursor: zoom-in;
+    }
+    .grid-item img {
+      width: 100%;
+      display: block;
+      transition: opacity 0.3s;
+    }
+    .grid-item:hover img { opacity: 0.88; }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      color: var(--muted);
+    }
+    .empty span {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .empty-line {
+      width: 1px;
+      height: 3rem;
+      background: var(--border);
+    }
+
+    /* ── LIGHTBOX ── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,10,0.92);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      animation: pop 0.2s ease;
+    }
+    @keyframes pop {
+      from { transform: scale(0.96); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    #lb-close {
+      position: absolute;
+      top: 1.5rem; right: 1.5rem;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.4);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: color 0.15s;
+    }
+    #lb-close:hover { color: #fff; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    footer span {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .grid { columns: 2; }
+      header { padding: 1.2rem 1.2rem 0.8rem; }
+      .panel { padding: 2.5rem 1.2rem 3rem; }
+    }
+    @media (max-width: 420px) {
+      .grid { columns: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header id="header">
+  <a class="site-name" href="#">h3llafogg3y</a>
+  <nav>
+    <button class="active" data-tab="pottery">pottery</button>
+    <button data-tab="investments">investments</button>
+  </nav>
+</header>
+
+<main>
+  <!-- POTTERY TAB -->
+  <div class="panel active" id="tab-pottery">
+    <div class="grid" id="pottery-grid">
+      <!-- photos go here -->
+    </div>
+    <div class="empty" id="pottery-empty">
+      <div class="empty-line"></div>
+      <span>photos coming soon</span>
+      <div class="empty-line"></div>
+    </div>
+  </div>
+
+  <!-- INVESTMENTS TAB -->
+  <div class="panel" id="tab-investments">
+    <div class="grid" id="investments-grid">
+      <!-- photos go here -->
+    </div>
+    <div class="empty" id="investments-empty">
+      <div class="empty-line"></div>
+      <span>photos coming soon</span>
+      <div class="empty-line"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>h3llafogg3y</span>
+  <span>© 2025</span>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lb-close">close</button>
+  <img id="lb-img" src="" alt="" />
+</div>
+
+<script>
+  // ── TAB SWITCHING ──
+  const tabs = document.querySelectorAll('nav button');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ── STICKY HEADER ──
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  // ── LIGHTBOX ──
+  const lb     = document.getElementById('lightbox');
+  const lbImg  = document.getElementById('lb-img');
+  const lbClose = document.getElementById('lb-close');
+
+  function openLightbox(src, alt) {
+    lbImg.src = src;
+    lbImg.alt = alt || '';
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => { lbImg.src = ''; }, 200);
+  }
+
+  lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+  lbClose.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  // ── ADD PHOTO HELPER ──
+  // To add photos, call: addPhoto('pottery', 'your-image.jpg', 'optional caption')
+  // or: addPhoto('investments', 'your-image.jpg')
+  function addPhoto(tab, src, alt) {
+    const grid  = document.getElementById(tab + '-grid');
+    const empty = document.getElementById(tab + '-empty');
+    if (!grid) return;
+
+    empty.style.display = 'none';
+
+    const item = document.createElement('div');
+    item.className = 'grid-item';
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = alt || '';
+    img.loading = 'lazy';
+
+    item.appendChild(img);
+    item.addEventListener('click', () => openLightbox(src, alt));
+    grid.appendChild(item);
+  }
+
+  // ── YOUR PHOTOS GO HERE ──
+  // Uncomment and edit these lines to add your photos:
+  //
+  // addPhoto('pottery', 'images/pot1.jpg', 'First bowl');
+  // addPhoto('pottery', 'images/pot2.jpg');
+  // addPhoto('investments', 'images/chart1.jpg', 'Q1 notes');
+</script>
+
+</body>
+</html>
